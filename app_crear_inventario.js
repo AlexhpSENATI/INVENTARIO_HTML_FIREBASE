@@ -96,5 +96,5 @@ function addItem() {
 
 // Cerrar sesión
 function logout() {
-  auth.signOut().then(() => window.location.href = 'login_register.html');
+  auth.signOut().then(() => window.location.href = 'index.html');
 }

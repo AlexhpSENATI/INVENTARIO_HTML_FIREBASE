@@ -96,6 +96,6 @@ function loadInventory() {
 // -------- Logout --------
 function logout() {
   auth.signOut().then(() => {
-    window.location.href = 'login_register.html';
+    window.location.href = 'index.html';
   });
 }
