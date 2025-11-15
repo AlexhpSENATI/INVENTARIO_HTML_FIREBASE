@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Inventario</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4361ee',
+            'primary-light': '#4895ef',
+            secondary: '#3f37c9',
+            success: '#4cc9f0',
+            dark: '#3a0ca3',
+            danger: '#e63946',
+          },
+          fontFamily: {
+            'poppins': ['Poppins', 'sans-serif'],
+          },
+          boxShadow: {
+            'custom': '0 10px 20px rgba(0, 0, 0, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="bg-white rounded-2xl shadow-custom p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-4">
+        <i class="fas fa-boxes text-3xl text-primary"></i>
+        <h1 class="text-2xl font-bold text-dark">Crear Inventario</h1>
+      </div>
+      <div class="bg-gray-100 px-5 py-3 rounded-xl">
+        <p class="font-medium text-dark">Agregar nuevo producto al inventario</p>
+      </div>
+    </header>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Sidebar Navigation -->
+      <nav class="bg-white rounded-2xl shadow-custom p-6 w-full lg:w-64 h-fit">
+        <a href="control.html" class="flex items-center gap-4 p-4 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-xl border-l-4 border-transparent hover:border-primary mb-3 transition-all duration-300">
+          <i class="fas fa-tachometer-alt w-6 text-center"></i>
+          <span class="font-medium">Panel Principal</span>
+        </a>
+        <a href="crear_inventario.html" class="flex items-center gap-4 p-4 text-primary bg-blue-50 rounded-xl border-l-4 border-primary mb-3">
+          <i class="fas fa-plus-circle w-6 text-center"></i>
+          <span class="font-medium">Crear Inventario</span>
+        </a>
+        <a href="lista_inventario.html" class="flex items-center gap-4 p-4 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-xl border-l-4 border-transparent hover:border-primary mb-3 transition-all duration-300">
+          <i class="fas fa-list w-6 text-center"></i>
+          <span class="font-medium">Lista Inventario</span>
+        </a>
+        <a href="crear_selects.html" class="flex items-center gap-4 p-4 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-xl border-l-4 border-transparent hover:border-primary mb-3 transition-all duration-300">
+          <i class="fas fa-cog w-6 text-center"></i>
+          <span class="font-medium">Crear Selects</span>
+        </a>
+        <a href="#" onclick="logout()" class="flex items-center gap-4 p-4 text-danger hover:bg-red-50 rounded-xl border-l-4 border-transparent hover:border-danger mt-6 border-t border-gray-100 transition-all duration-300">
+          <i class="fas fa-sign-out-alt w-6 text-center"></i>
+          <span class="font-medium">Cerrar Sesión</span>
+        </a>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="bg-white rounded-2xl shadow-custom p-8 flex-1">
+        <h2 class="text-3xl font-bold text-dark mb-2">Nuevo Producto</h2>
+        <p class="text-gray-600 mb-8">Complete la información del producto para agregarlo al inventario</p>
+
+        <!-- Formulario -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Columna Izquierda -->
+          <div class="space-y-6">
+            <!-- Nombre del Producto -->
+            <div>
+              <label for="itemName" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-tag mr-2 text-primary"></i>Nombre del Producto
+              </label>
+              <input type="text" id="itemName" 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                     placeholder="Ingrese el nombre del producto">
+            </div>
+
+            <!-- Tipo de Producto -->
+            <div>
+              <label for="itemType" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-list-alt mr-2 text-primary"></i>Tipo de Producto
+              </label>
+              <select id="itemType" 
+                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                <option value="">Seleccione el tipo</option>
+              </select>
+            </div>
+
+            <!-- Precio -->
+            <div>
+              <label for="itemPrice" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-dollar-sign mr-2 text-primary"></i>Precio
+              </label>
+              <input type="number" id="itemPrice" 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                     placeholder="0.00" min="0" step="0.01">
+            </div>
+          </div>
+
+          <!-- Columna Derecha -->
+          <div class="space-y-6">
+            <!-- Cantidad -->
+            <div>
+              <label for="itemQuantity" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-cubes mr-2 text-primary"></i>Cantidad
+              </label>
+              <input type="number" id="itemQuantity" 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                     placeholder="0" min="0">
+            </div>
+
+            <!-- Unidad de Medida -->
+            <div>
+              <label for="itemUnit" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-balance-scale mr-2 text-primary"></i>Unidad de Medida
+              </label>
+              <select id="itemUnit" 
+                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300">
+                <option value="">Seleccione la unidad</option>
+              </select>
+            </div>
+
+            <!-- Imagen del Producto -->
+            <div>
+              <label for="itemImage" class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-image mr-2 text-primary"></i>Imagen del Producto
+              </label>
+              <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center transition-all duration-300 hover:border-primary hover:bg-blue-50">
+                <input type="file" id="itemImage" 
+                       class="hidden"
+                       accept="image/*">
+                <div class="flex flex-col items-center justify-center">
+                  <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                  <p class="text-sm text-gray-600 mb-2">Haga clic para subir una imagen</p>
+                  <button type="button" onclick="document.getElementById('itemImage').click()" 
+                          class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-all duration-300">
+                    Seleccionar Archivo
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón de Agregar -->
+        <div class="mt-8 flex justify-center">
+          <button onclick="addItem()" 
+                  class="bg-primary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-secondary hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-3">
+            <i class="fas fa-plus-circle"></i>
+            Agregar Producto al Inventario
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer
+    <footer class="text-center mt-10 text-white py-6">
+      <p class="text-sm">Sistema de Inventario &copy; 2023 - Todos los derechos reservados</p>
+    </footer> -->
+  </div>
+
+  <script src="app_crear_inventario.js"></script>
+</body>
+</html>

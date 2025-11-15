@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inventario</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { display: flex; font-family: sans-serif; }
+    #sidebar { width: 200px; border-right: 1px solid #ccc; padding: 10px; }
+    #content { flex: 1; padding: 10px; }
+    .tab { display: none; }
+    .tab.active { display: block; }
+    button { margin: 5px 0; display: block; }
+  </style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h3>Menú</h3>
+  <button onclick="showTab('control')">Control</button>
+  <button onclick="showTab('crear')">Crear Inventario</button>
+  <button onclick="showTab('lista')">Lista de Inventario</button>
+  <button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<div id="content">
+  <div id="control" class="tab">
+    <h2>Control de Usuario</h2>
+    <p id="userInfo"></p>
+  </div>
+
+  <div id="crear" class="tab">
+    <h2>Crear Inventario</h2>
+    <input type="text" id="itemName" placeholder="Nombre del ítem">
+    <input type="number" id="itemQuantity" placeholder="Cantidad">
+    <button onclick="addItem()">Agregar ítem</button>
+  </div>
+
+  <div id="lista" class="tab">
+    <h2>Lista de Inventario</h2>
+    <ul id="inventoryList"></ul>
+  </div>
+</div>
+
+<script src="app_inventory.js"></script>
+</body>
+</html>

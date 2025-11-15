@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Selects</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4361ee',
+            'primary-light': '#4895ef',
+            secondary: '#3f37c9',
+            success: '#4cc9f0',
+            dark: '#3a0ca3',
+            danger: '#e63946',
+          },
+          fontFamily: {
+            'poppins': ['Poppins', 'sans-serif'],
+          },
+          boxShadow: {
+            'custom': '0 10px 20px rgba(0, 0, 0, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="bg-white rounded-2xl shadow-custom p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-4">
+        <i class="fas fa-cog text-3xl text-primary"></i>
+        <h1 class="text-2xl font-bold text-dark">Configurar Opciones</h1>
+      </div>
+      <div class="bg-gray-100 px-5 py-3 rounded-xl">
+        <p class="font-medium text-dark">Gestionar tipos y unidades de productos</p>
+      </div>
+    </header>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Sidebar Navigation -->
+      <nav class="bg-white rounded-2xl shadow-custom p-6 w-full lg:w-64 h-fit">
+        <a href="control.html" class="flex items-center gap-4 p-4 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-xl border-l-4 border-transparent hover:border-primary mb-3 transition-all duration-300">
+          <i class="fas fa-tachometer-alt w-6 text-center"></i>
+          <span class="font-medium">Panel Principal</span>
+        </a>
+        <a href="crear_inventario.html" class="flex items-center gap-4 p-4 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-xl border-l-4 border-transparent hover:border-primary mb-3 transition-all duration-300">
+          <i class="fas fa-plus-circle w-6 text-center"></i>
+          <span class="font-medium">Crear Inventario</span>
+        </a>
+        <a href="lista_inventario.html" class="flex items-center gap-4 p-4 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-xl border-l-4 border-transparent hover:border-primary mb-3 transition-all duration-300">
+          <i class="fas fa-list w-6 text-center"></i>
+          <span class="font-medium">Lista Inventario</span>
+        </a>
+        <a href="crear_selects.html" class="flex items-center gap-4 p-4 text-primary bg-blue-50 rounded-xl border-l-4 border-primary mb-3">
+          <i class="fas fa-cog w-6 text-center"></i>
+          <span class="font-medium">Crear Selects</span>
+        </a>
+        <a href="#" onclick="logout()" class="flex items-center gap-4 p-4 text-danger hover:bg-red-50 rounded-xl border-l-4 border-transparent hover:border-danger mt-6 border-t border-gray-100 transition-all duration-300">
+          <i class="fas fa-sign-out-alt w-6 text-center"></i>
+          <span class="font-medium">Cerrar Sesión</span>
+        </a>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="bg-white rounded-2xl shadow-custom p-8 flex-1">
+        <h2 class="text-3xl font-bold text-dark mb-2">Configurar Opciones</h2>
+        <p class="text-gray-600 mb-8">Gestiona los tipos de productos y unidades de medida disponibles</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Tipos de Producto -->
+          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+            <div class="flex items-center gap-3 mb-6">
+              <i class="fas fa-tags text-2xl text-primary"></i>
+              <h3 class="text-xl font-semibold text-dark">Tipos de Producto</h3>
+            </div>
+            
+            <div class="mb-6">
+              <label for="newProductType" class="block text-sm font-medium text-gray-700 mb-2">
+                Agregar nuevo tipo
+              </label>
+              <div class="flex gap-3">
+                <input type="text" id="newProductType" 
+                       class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                       placeholder="Ej: Electrónicos, Ropa, Alimentos...">
+                <button onclick="addProductType()" 
+                        class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-secondary transition-all duration-300 flex items-center gap-2">
+                  <i class="fas fa-plus"></i>
+                  Agregar
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-gray-700 mb-4">Tipos existentes</h4>
+              <div id="productTypesList" class="space-y-3 max-h-60 overflow-y-auto">
+                <!-- Estados de carga y vacío -->
+                <div class="text-center py-4">
+                  <i class="fas fa-spinner fa-spin text-primary text-xl mb-2"></i>
+                  <p class="text-gray-600">Cargando tipos...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Unidades de Medida -->
+          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+            <div class="flex items-center gap-3 mb-6">
+              <i class="fas fa-balance-scale text-2xl text-primary"></i>
+              <h3 class="text-xl font-semibold text-dark">Unidades de Medida</h3>
+            </div>
+            
+            <div class="mb-6">
+              <label for="newUnit" class="block text-sm font-medium text-gray-700 mb-2">
+                Agregar nueva unidad
+              </label>
+              <div class="flex gap-3">
+                <input type="text" id="newUnit" 
+                       class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                       placeholder="Ej: Kilogramos, Litros, Unidades...">
+                <button onclick="addUnit()" 
+                        class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-secondary transition-all duration-300 flex items-center gap-2">
+                  <i class="fas fa-plus"></i>
+                  Agregar
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-lg font-medium text-gray-700 mb-4">Unidades existentes</h4>
+              <div id="unitsList" class="space-y-3 max-h-60 overflow-y-auto">
+                <!-- Estados de carga y vacío -->
+                <div class="text-center py-4">
+                  <i class="fas fa-spinner fa-spin text-primary text-xl mb-2"></i>
+                  <p class="text-gray-600">Cargando unidades...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-2xl p-6">
+          <div class="flex items-start gap-4">
+            <i class="fas fa-info-circle text-blue-500 text-xl mt-1"></i>
+            <div>
+              <h4 class="text-lg font-semibold text-blue-800 mb-2">Información importante</h4>
+              <p class="text-blue-700">
+                Los tipos de producto y unidades de medida que configures aquí estarán disponibles 
+                en los formularios de creación de inventario. Asegúrate de usar nombres claros 
+                y consistentes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <!-- <footer class="text-center mt-10 text-white py-6">
+      <p class="text-sm">Sistema de Inventario &copy; 2023 - Todos los derechos reservados</p>
+    </footer> -->
+  </div>
+
+  <script src="app_crear_selects.js"></script>
+</body>
+</html>
